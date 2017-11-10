@@ -34,10 +34,10 @@ module.exports = {
   continous_integration: {
     host: '127.0.0.1',
     port: 5432,
-    database: process.env.POSTGRES_DB,
+    database: 'chat_db',
     dialect: 'postgres',
-    username: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD,
+    username: 'shippable',
+    password: 'shippable',
     seederStorage: 'sequelize',
     seederStorageTableName: 'SequelizeData'
   }

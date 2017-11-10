@@ -20,7 +20,7 @@ services:
     environment:
       - KONTENA_LB_INTERNAL_PORT=3000
     links:
-      - load-balancer-proxy
+      - load-balancer
     depends_on:
       - db
     secrets:
