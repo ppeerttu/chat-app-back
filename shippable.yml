@@ -9,8 +9,12 @@ branches:
   only:
     - master
 
+services:
+  - postgres
+
 env:
   global:
+    - NODE_ENV=continous_integration
     # Docker hub repo
     - secure: f/ht/HAJuLYW/FaHG9CGbipNSlTY/PyJKaAsU7NHxQYShgSov+MwZhHJtqhh8qjxQ5/2xCplMQDMA0v2n2cBjm79ihlV8D203a7JmsY0DC6kGmOpYfE0Ky8Y2sVZGEFP4uQkiSTFX4aeC31MfgJKeHvQnsE1t5guuVIsJQYo7qy69LMYV36u1tGUdgapdEQlclo9V1QFZ88kFSALs4XXZy3RjOil7fYne+MR0RBrln6LndzFMYBj+swOvtwv3iAmiHHEnwoIbexbI0Be/C7INwdJEabh/rsgePgA3mk5wLP5S8IS7BR/4kNbxK1mBjwfzKb4nZmf4cIX4wVRknjFfA==
 build:
@@ -19,7 +23,9 @@ build:
     - npm install npm@5.3.0 -g
     - npm -v
     - npm install
-    - npm test
+    - psql -c 'create role $POSTGRES_USER with superuser;' -U postgres
+    - psql -c 'create database $POSTGRES_DB;' -U postgres
+    - npm run test:ci
 
   on_success:
     - docker build -f Dockerfile.prod -t $DOCKER_HUB_REPO:$BUILD_NUMBER .

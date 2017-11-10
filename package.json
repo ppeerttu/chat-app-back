@@ -5,7 +5,9 @@
   "scripts": {
     "prestart": "sequelize db:migrate --config config/config.js && sequelize db:seed:all --config config/config.js",
     "start": "nodemon ./bin/www.js",
-    "test": "jest --silent"
+    "test": "jest --silent",
+    "test:ci": "jest --silent",
+    "pretest:ci": "sequelize db:migrate --env $NODE_ENV --config config/config.js && sequelize db:seed:all --env $NODE_ENV --config config/config.js"
   },
   "dependencies": {
     "body-parser": "~1.16.0",
