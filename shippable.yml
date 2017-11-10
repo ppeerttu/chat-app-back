@@ -10,8 +10,9 @@ branches:
     - master
 
 env:
-  # Docker hub repo
-  - secure: gTpEVmFwMyEBVXfBm1+4E4xeTjUG9pD9cVXRcb9j2ZFkLA1IpOpWLq9wsk2hq9jyjyiuwRveMSIfGCBGMBoMDsMxy8/oZnLvIV7X4UkebkLoKYlR3bzliAVQSBG9jrYeJ6c6p0PW+5IM09Y7Qpc8NBAHLMqJQ9MxS/OOJEYgHXa8uSeKShX8XQ8+zbR1aFDt43er/QNmwNmv+TbcZRcQdWnLW56iOVEv52k6uvTnZzhSJzy4IR1pEulPwHbpLPC7dfpGS86vaHHbNrhdh78VOoAuI2/im3RQ70p85ud+OoYhChBmKPGphd1kjiD7Ygg2p2oD9uH34omuTvcgvldHQg==
+  global:
+    # Docker hub repo
+    - secure: gTpEVmFwMyEBVXfBm1+4E4xeTjUG9pD9cVXRcb9j2ZFkLA1IpOpWLq9wsk2hq9jyjyiuwRveMSIfGCBGMBoMDsMxy8/oZnLvIV7X4UkebkLoKYlR3bzliAVQSBG9jrYeJ6c6p0PW+5IM09Y7Qpc8NBAHLMqJQ9MxS/OOJEYgHXa8uSeKShX8XQ8+zbR1aFDt43er/QNmwNmv+TbcZRcQdWnLW56iOVEv52k6uvTnZzhSJzy4IR1pEulPwHbpLPC7dfpGS86vaHHbNrhdh78VOoAuI2/im3RQ70p85ud+OoYhChBmKPGphd1kjiD7Ygg2p2oD9uH34omuTvcgvldHQg==
 
 build:
   ci:
