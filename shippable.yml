@@ -30,7 +30,7 @@ build:
     - npm -v
     - npm install
     - psql -c "create role shippable with superuser password 'shippable';" -U postgres
-    - psql -c "create database chat_db;" -U postgres
+    - psql -c "create database chat_db owner shippable;" -U postgres
     - npm run test:ci
 
   on_success:
