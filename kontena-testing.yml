@@ -9,9 +9,18 @@ variables:
       vault: APP_VERSION
 
 services:
+  load-balancer:
+    image: kontena/lb:latest
+    ports:
+      - 80:80
+
   app:
     image: "ppeerttu/chat-app-back:${app_version}"
     stateful: true
+    environment:
+      - KONTENA_LB_INTERNAL_PORT=3300
+    links:
+      - load-balancer-proxy
     depends_on:
       - db
     secrets:
