@@ -23,7 +23,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
-app.use(expressJWT({ secret: 'testy secret 5' }).unless({ path: ['/users/login', '/users/register']}));
+app.use(expressJWT({ secret: 'testy secret 5' }).unless({ path: ['/api/users/login', '/api/users/register']}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 

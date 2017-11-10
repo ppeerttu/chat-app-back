@@ -1,0 +1,14 @@
+stack: ppeerttu/lb-internet
+version: 1.0.0
+description: Internet proxy
+
+services:
+  lb-public:
+    image: kontena/lb:latest
+    ports:
+      - 443:443
+      - 80:80
+    secrets:
+      - secret: SSL_CERT_LE_TEST_BUNDLE
+        name: SSL_CERTS
+        type: env

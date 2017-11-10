@@ -9,22 +9,13 @@ variables:
       vault: APP_VERSION
 
 services:
-  load-balancer:
-    image: kontena/lb:latest
-    ports:
-      - 80:80
-    secrets:
-      - secret: SSL_CERT_LE_TEST_BUNDLE
-        name: SSL_CERTS
-        type: env
-
   app:
     image: "ppeerttu/chat-app-back:${app_version}"
     stateful: true
     environment:
       - KONTENA_LB_INTERNAL_PORT=3000
     links:
-      - load-balancer
+      - lb-internet/lb-public
     depends_on:
       - db
     secrets:
