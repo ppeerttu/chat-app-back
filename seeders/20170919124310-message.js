@@ -16,7 +16,7 @@ module.exports = {
     return queryInterface.bulkInsert('Messages', [{
       content: 'Howdy friend!',
       userId: 2,
-      roomId: 3,
+      roomId: 1,
       createdAt: now,
       updatedAt: now
     }], {});
