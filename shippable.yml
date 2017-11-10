@@ -12,7 +12,6 @@ branches:
 env:
   global:
     # Docker hub repo
-    - TEST_ENV_VAR=fooBar
     - secure: f/ht/HAJuLYW/FaHG9CGbipNSlTY/PyJKaAsU7NHxQYShgSov+MwZhHJtqhh8qjxQ5/2xCplMQDMA0v2n2cBjm79ihlV8D203a7JmsY0DC6kGmOpYfE0Ky8Y2sVZGEFP4uQkiSTFX4aeC31MfgJKeHvQnsE1t5guuVIsJQYo7qy69LMYV36u1tGUdgapdEQlclo9V1QFZ88kFSALs4XXZy3RjOil7fYne+MR0RBrln6LndzFMYBj+swOvtwv3iAmiHHEnwoIbexbI0Be/C7INwdJEabh/rsgePgA3mk5wLP5S8IS7BR/4kNbxK1mBjwfzKb4nZmf4cIX4wVRknjFfA==
 build:
   ci:
@@ -23,11 +22,8 @@ build:
     - npm test
 
   on_success:
-    - echo $TEST_ENV_VAR
-    - echo $BUILD_NUMBER
-    - echo $DOCKER_HUB_REPO
-    #- docker build -f Dockerfile.prod -t ${DOCKER_HUB_REPO}:${BUILD_NUMBER}
-    #- docker push ${DOCKER_HUB_REPO}:${BUILD_NUMBER}
+    - docker build -f Dockerfile.prod -t $DOCKER_HUB_REPO:$BUILD_NUMBER
+    - docker push $DOCKER_HUB_REPO:$BUILD_NUMBER
 
 integrations:
   hub:
