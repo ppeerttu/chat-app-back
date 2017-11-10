@@ -20,7 +20,8 @@ env:
     # PG username
     - secure: AT419udmdBo9CZZsid3Id04VS5+L3jUF+kjvoaLN8MzAakAteI+CcRpEWIcup9IrmmPZ9ZxGnbrgUse0wdlChE/W6tbgjpYtIT7Emx2FWWM3/i5yBJRxQky2fjQy6jIYquqlpEqqhbH8vupNzZ0ezSHQl0ogwunP0Cz3CeesijldwmUFmWEAIb6J6mwYyz6ssWEsYlYYpU2NUzvMnO6OKnPDEdHLddEG2rlASzCf86vqWJrPSU5aA0J9JTU+ROK4SDvqZzoT1/NHcsjWOrW5e8/xkgaIRpL2kvQGfS2ZXAwl4S7Z9mCMfsr/w2qNaav9WBuKBzxOuz/qHRi9iliYxg==
     # PG database
-    - secure: Rc2yZNBxav/hS5sLW0dpUsFn3LAbKbWevjLM/FQktCRI73ol87fjfODkt6Q588UCZoOFAbSrgk7APgSD11Nh1pMfCQIAQHKPfISDeTFFxF+c34vCJfi3b7DH24jWPsg30Zczl4zT/Ptiltin34OMvnXS+Zbh+f8X75I5KTD82TIabzPXQgqUOTrUQF4bdE4+ihQTSVClaOjDp2ADUwQzeqR2YcO9mnUA8WOG1mQ2O5Gdk3WJURG5RKu7szD70680yXCL/k9a/Yu3BJ7nCDB6R/z1sra5qM0z9oyTvWZvUIaAWzQ5N79G/w1Z/ecYs5b85iGaqqpBhHHri9Z6QJmwZg==build:
+    - secure: Rc2yZNBxav/hS5sLW0dpUsFn3LAbKbWevjLM/FQktCRI73ol87fjfODkt6Q588UCZoOFAbSrgk7APgSD11Nh1pMfCQIAQHKPfISDeTFFxF+c34vCJfi3b7DH24jWPsg30Zczl4zT/Ptiltin34OMvnXS+Zbh+f8X75I5KTD82TIabzPXQgqUOTrUQF4bdE4+ihQTSVClaOjDp2ADUwQzeqR2YcO9mnUA8WOG1mQ2O5Gdk3WJURG5RKu7szD70680yXCL/k9a/Yu3BJ7nCDB6R/z1sra5qM0z9oyTvWZvUIaAWzQ5N79G/w1Z/ecYs5b85iGaqqpBhHHri9Z6QJmwZg==
+build:
   ci:
     # Specific version is used to avoid issues due to version differencies
     - npm install npm@5.3.0 -g
