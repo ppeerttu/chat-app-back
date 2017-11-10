@@ -29,7 +29,7 @@ build:
     - npm install npm@5.3.0 -g
     - npm -v
     - npm install
-    - psql -c "create role ${POSTGRES_USER} with superuser password ${POSTGRES_PASSWORD};" -U postgres
+    - psql -c "create role ${POSTGRES_USER} with superuser password '${POSTGRES_PASSWORD}';" -U postgres
     - psql -c "create database ${POSTGRES_DB};" -U postgres
     - npm run test:ci
 
