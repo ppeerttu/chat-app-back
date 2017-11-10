@@ -1,0 +1,41 @@
+stack: ppeerttu/chat-app-back
+version: 1.0.0
+description: Chat app testing environment
+
+variables:
+  app_version:
+    type: string
+    from:
+      vault: APP_VERSION
+
+services:
+  app:
+    image: "ppeerttu/chat-app-back:${app_version}"
+    stateful: true
+    depends_on:
+      - db
+    secrets:
+      - secret: FRONT_SERVICE_DOMAIN
+        name: KONTENA_LB_VIRTUAL_HOSTS
+        type: env
+
+  db:
+    image: postgres:9.6.2
+    stateful: true
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    secrets:
+      - secret: POSTGRES_USER
+        name: POSTGRES_USER
+        type: env
+      - secret: POSTGRES_PASSWORD
+        name: POSTGRES_PASSWORD
+        type: env
+      - secret: POSTGRES_DB
+        name: POSTGRES_DB
+        type: env
+
+volumes:
+  db_volume:
+    external:
+      name: db-volume
