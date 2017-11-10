@@ -23,8 +23,8 @@ build:
     - npm test
 
   on_success:
-    - docker build -f Dockerfile.prod -t $DOCKER_HUB_REPO:$BUILD_NUMBER
-    - docker push $DOCKER_HUB_REPO:$BUILD_NUMBER
+    - docker build -f Dockerfile.prod -t ${DOCKER_HUB_REPO}:${BUILD_NUMBER}
+    - docker push ${DOCKER_HUB_REPO}:${BUILD_NUMBER}
 
 integrations:
   hub:
