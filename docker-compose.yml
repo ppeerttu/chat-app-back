@@ -1,0 +1,30 @@
+version: '2'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm start
+    volumes:
+      - .:/var/app
+    ports:
+      - "3000:3000"
+    links:
+      - db
+    depends_on:
+      - db
+    environment:
+      POSTGRES_DB: chat_db
+      POSTGRES_USER: chat-user
+      POSTGRES_PASSWORD: PSQLpass123
+  db:
+    image: postgres
+    volumes:
+      - chatdb:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: chat_db
+      POSTGRES_USER: chat-user
+      POSTGRES_PASSWORD: PSQLpass123
+volumes:
+  chatdb:
+    external: true

@@ -1,0 +1,14 @@
+FROM node:8.5.0-alpine
+
+RUN mkdir /src
+
+COPY . /src/
+
+# Change the ownership of files to node user
+RUN chown -R node:node /src
+USER node
+
+# Install dependencies
+RUN cd /src && npm install --quiet && npm cache verify
+
+WORKDIR /src
