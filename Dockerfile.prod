@@ -11,4 +11,6 @@ USER node
 # Install dependencies
 RUN cd /src && npm install --quiet && npm cache verify
 
+EXPOSE 3000
+
 WORKDIR /src
