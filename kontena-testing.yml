@@ -18,14 +18,23 @@ services:
     image: "ppeerttu/chat-app-back:${app_version}"
     stateful: true
     environment:
-      - KONTENA_LB_INTERNAL_PORT=3300
+      - KONTENA_LB_INTERNAL_PORT=3000
     links:
       - load-balancer-proxy
     depends_on:
       - db
     secrets:
-      - secret: FRONT_SERVICE_DOMAIN
+      - secret: APP_DOMAIN
         name: KONTENA_LB_VIRTUAL_HOSTS
+        type: env
+      - secret: POSTGRES_USER
+        name: POSTGRES_USER
+        type: env
+      - secret: POSTGRES_PASSWORD
+        name: POSTGRES_PASSWORD
+        type: env
+      - secret: POSTGRES_DB
+        name: POSTGRES_DB
         type: env
 
   db:

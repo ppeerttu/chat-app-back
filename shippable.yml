@@ -22,7 +22,7 @@ env:
     # PG database
     - secure: Rc2yZNBxav/hS5sLW0dpUsFn3LAbKbWevjLM/FQktCRI73ol87fjfODkt6Q588UCZoOFAbSrgk7APgSD11Nh1pMfCQIAQHKPfISDeTFFxF+c34vCJfi3b7DH24jWPsg30Zczl4zT/Ptiltin34OMvnXS+Zbh+f8X75I5KTD82TIabzPXQgqUOTrUQF4bdE4+ihQTSVClaOjDp2ADUwQzeqR2YcO9mnUA8WOG1mQ2O5Gdk3WJURG5RKu7szD70680yXCL/k9a/Yu3BJ7nCDB6R/z1sra5qM0z9oyTvWZvUIaAWzQ5N79G/w1Z/ecYs5b85iGaqqpBhHHri9Z6QJmwZg==
     # PG password
-    - secure: r0LCcnzdOo+PjKFWzDZdiLJx8QL/7n/MRPkPx/yOMCqoUdJP6TubaJdg7O+kfAGhDFZkfRLDZX+DSWYU07W+QoM4UHaYV+a3chLhYGjZ3SyKsW4gFCd7ZISlfKCQ1JobtvxxkFqirBOi/oBsuCeJaHn+oaR0aQ/ZguPONWv4QcvAqLvSMQaj3avi46U03X/4f3LXo3RQ0i8WZs63X7u4YtOPtASZCqP33gLc7A3ztjb9YX30Y16ZTp1znu52O6VR53spjJxk3P9J892/PYghXbxVYgf5BDiX0GlAtt9uI9TDuhnVhXXJWRfFyJoJjvlhGMq42j09LML2Ev2i2mDtdQ==
+    - secure: avsyW/YXNA6ww88kc1m1BrN6vF/4mou0RJr2bLuWsPEIn2khga6tyniOlbIHrqxINAk4aJt5XHvy0FTlEHQpt/Jsih7bMdpGGniXT4KPPjOvIO/6b1uCnGOFgBDF+CSeiyHntuilmSpuek1kW73ubzYb8dsht5UxE4aAnFRFLCvvs63+eVbRX/XS728fECqKmTLCx3Kxx7GTzgMa0+NPvnxWbEAS8abE40Xj7EUXb/7y5vQzVBp/CrjE5ZM//46EiB2MkOJKfnODuPTm8knRya6FuzPzBcoTvMzzu9elEgKN8XV8QPy7VqqafPGkfymp/NojHkUTVAEk73JtuaRS3Q==
 build:
   ci:
     # Specific version is used to avoid issues due to version differencies
