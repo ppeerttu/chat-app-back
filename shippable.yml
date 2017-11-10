@@ -23,7 +23,7 @@ build:
 
   on_success:
     - echo $TEST_ENV_VAR
-    - echo "Build ${BUILD_NUMBER}"
+    - echo $BUILD_NUMBER
     #- docker build -f Dockerfile.prod -t ${DOCKER_HUB_REPO}:${BUILD_NUMBER}
     #- docker push ${DOCKER_HUB_REPO}:${BUILD_NUMBER}
 
