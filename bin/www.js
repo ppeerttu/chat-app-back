@@ -92,3 +92,5 @@ function onListening() {
     : 'port ' + addr.port;
   logger.add('info', 'Listening on ' + bind);
 }
+
+module.exports = server;

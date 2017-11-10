@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "prestart": "sequelize db:migrate --config config/config.js && sequelize db:seed:all --config config/config.js",
-    "start": "nodemon ./bin/www.js"
+    "start": "nodemon ./bin/www.js",
+    "test": "jest --silent"
   },
   "dependencies": {
     "body-parser": "~1.16.0",
@@ -24,5 +25,32 @@
     "serve-favicon": "~2.3.2",
     "socket.io": "^2.0.3",
     "winston": "^2.4.0"
+  },
+  "devDependencies": {
+    "jest": "^21.2.1",
+    "jest-junit": "^3.1.0",
+    "supertest": "^3.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverage": true,
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text",
+      "cobertura"
+    ],
+    "setupFiles": [
+      "<rootDir>/tests/setup/ignore-winston.js"
+    ],
+    "collectCoverageFrom": [
+      "routes/*.js",
+      "app.js"
+    ],
+    "coverageDirectory": "./shippable/codecoverage",
+    "testResultsProcessor": "./node_modules/jest-junit"
+  },
+  "jest-junit": {
+    "output": "./shippable/testresults/junit.xml"
   }
 }
