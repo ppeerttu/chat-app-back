@@ -28,7 +28,7 @@ const server = http.createServer(app);
  */
 
 const io = require('socket.io')(server, {
-  path: '/api/socket.io'
+  path: '/api/socket'
 });
 require('./socketHandler')(io);
 
