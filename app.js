@@ -22,7 +22,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 const corsOptions = {
   origin: (origin, callback) => {
-    if (whiteList.indexOf(origin) !== -1) {
+    if (whiteList.indexOf(origin) !== -1 || process.env.NODE_ENV == 'continous_integration') {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
