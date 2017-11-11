@@ -1,10 +1,12 @@
 {
   "name": "chat-backend",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "prestart": "sequelize db:migrate --config config/config.js && sequelize db:seed:all --config config/config.js",
     "start": "nodemon ./bin/www.js",
+    "prestart:prod": "sequelize db:migrate --config config/config.js && sequelize db:seed:all --config config/config.js",
+    "start:prod": "node bin/www.js",
     "test": "jest --silent",
     "test:ci": "jest --silent",
     "pretest:ci": "sequelize db:migrate --env $NODE_ENV --config config/config.js && sequelize db:seed:all --env $NODE_ENV --config config/config.js"

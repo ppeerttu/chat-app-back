@@ -1,11 +1,18 @@
 const Logger = require('../lib/logger'),
   logger = new Logger();
 
+let connections = {};
+
 module.exports = (io) => {
+
+  /**
+   * Handle incoming connections
+   */
   io.on('connection', socket => {
 
     logger.add('info', 'socket connected with id: ' + socket.id);
 
+    connections[socket.id] = {};
     /**
      * { roomId: <int>, userId: <int>, message: <string>, time: <int> }
      */
@@ -19,6 +26,7 @@ module.exports = (io) => {
      * { roomId: <int>, user: <User> }
      */
     socket.on('join', data => {
+      connections[socket.id] = Object.assign({}, data.user);
       logger.add('info', 'Received join request from client: ' + data.user.userName);
       socket.join(data.roomId, () => {
         socket.to(data.roomId).emit('userJoin', {
@@ -54,9 +62,10 @@ module.exports = (io) => {
       rooms.forEach(room => {
         logger.add('info', room);
         if (room !== id) {
-          //socket.to(room).emit('userLeave', { roomId: room, user: null });
+          socket.to(room).emit('userLeave', { roomId: room, user: connections[socket.id] });
         }
       });
+      delete connections[socket.id];
     });
   });
 };

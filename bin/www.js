@@ -23,8 +23,15 @@ app.set('port', port);
 
 const server = http.createServer(app);
 
-const io = require('socket.io')(server);
+/**
+ * Bind the server to the socket.io WebSocket server
+ */
+
+const io = require('socket.io')(server, {
+  path: '/api/socket.io'
+});
 require('./socketHandler')(io);
+
 /**
  * Listen on provided port, on all network interfaces.
  */
