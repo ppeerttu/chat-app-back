@@ -5,10 +5,12 @@ description: Internet proxy
 services:
   lb-public:
     image: kontena/lb:latest
+    deploy:
+      strategy: daemon
     ports:
       - 443:443
       - 80:80
     secrets:
-      - secret: SSL_CERT_LE_TEST_BUNDLE
+      - secret: SSL_CERT_LE_WWW_BUNDLE
         name: SSL_CERTS
         type: env

@@ -16,7 +16,7 @@ const app = express();
 // CORS setup
 let whiteList;
 if (process.env.NODE_ENV === 'production') {
-  whiteList = ['http://www.perttukarna.com', 'http://perttukarna.com'];
+  whiteList = ['https://www.perttukarna.com', 'https://perttukarna.com'];
 } else {
   whiteList = ['http://localhost:3300', 'http://localhost:4200'];
 }
