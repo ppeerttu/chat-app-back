@@ -5,31 +5,17 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const expressJWT = require('express-jwt');
-//const cors = require('cors');
+const cors = require('cors');
 
 const index = require('./routes/index');
 const users = require('./routes/users');
 const rooms = require('./routes/rooms');
 
 const app = express();
-/*
-// CORS setup
-let whiteList;
-if (process.env.NODE_ENV === 'production') {
-  whiteList = ['https://www.perttukarna.com', 'https://perttukarna.com'];
-} else {
-  whiteList = ['http://localhost:3300', 'http://localhost:4200'];
+
+if (process.env.NODE_ENV === 'development') {
+  app.use(cors());
 }
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (whiteList.indexOf(origin) !== -1 || process.env.NODE_ENV == 'continous_integration') {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  }
-};
-*/
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -47,12 +33,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/', index);
 app.use('/api/users', users);
 app.use('/api/rooms', rooms);
-/**
- * Allow OPTIONS and GET requests
- *
-app.options('*', cors());
-app.get('*', cors());
-*/
+
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   const err = new Error('Not Found');

@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Models = require('../models');
+const Logger = require('../lib/logger');
+const logger = new Logger();
 
 
 // GET /rooms/all
@@ -13,17 +15,26 @@ router.get('/all', (req, res, next) => {
 // POST /rooms/new
 router.post('/new', (req, res, next) => {
   const data = req.body;
-  console.log(data);
+  logger.add('info', data);
   if (!data.roomName) {
     res.status(400).json({ error: 'Invalid parameters!'});
   } else {
     if (!data.password) {
       data.password = null;
     }
-    Models.Room.create(data).then(room => {
-      res.send(room);
+    Models.Room.findOrCreate({
+      where: {
+        roomName: data.roomName
+      },
+      defaults: data
+    }).spread((instance, created) => {
+      if (created) {
+        res.send(instance);
+      } else {
+        res.status(409).json({ error: 'This roomName has already been taken!'});
+      }
     }).catch(err => {
-      res.status(400).json({ error: err.message });
+      logger.add('error', err);
     });
   }
 });
