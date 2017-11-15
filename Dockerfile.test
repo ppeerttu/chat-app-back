@@ -9,7 +9,10 @@ RUN chown -R node:node /src
 USER node
 
 # Install dependencies
-RUN cd /src && npm install --quiet && npm cache verify
+RUN apk --no-cache add --virtual builds-deps build-base python
+RUN npm install --quiet
+RUN npm rebuild bcrypt --build-from-source
+RUN npm cache verify
 
 EXPOSE 3000
 

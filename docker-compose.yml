@@ -5,8 +5,6 @@ services:
       context: .
       dockerfile: Dockerfile
     command: npm start
-    volumes:
-      - .:/var/app
     ports:
       - "3000:3000"
     links:

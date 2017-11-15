@@ -5,7 +5,10 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const expressJWT = require('express-jwt');
+const winston = require('winston');
+const expressWinston = require('express-winston');
 const cors = require('cors');
+const ENV = process.env.NODE_ENV;
 
 const index = require('./routes/index');
 const users = require('./routes/users');
@@ -13,16 +16,30 @@ const rooms = require('./routes/rooms');
 
 const app = express();
 
-if (process.env.NODE_ENV === 'development') {
+if (ENV === 'development') {
   app.use(cors());
 }
+
+if (ENV !== 'test') {
+  app.use(expressWinston.logger({
+    transports: [
+      new winston.transports.Console({
+        colorize: false,
+        timestamp: true
+      })
+    ],
+    expressFormat: true,
+    colorize: false,
+    meta: false
+  }));
+}
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 //app.use(cors(corsOptions));

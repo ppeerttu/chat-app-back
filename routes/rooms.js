@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcrypt');
+const saltRounds = 12;
 const Models = require('../models');
 const Logger = require('../lib/logger');
 const logger = new Logger();
@@ -9,18 +11,24 @@ const logger = new Logger();
 router.get('/all', (req, res, next) => {
   Models.Room.findAll().then(rooms => {
     res.send(rooms);
+  }).catch(err => {
+    res.status(500).json({ error: 'Error occurred while fetching rooms: ' + err.message });
+    logger.add('error', 'Error occurred while fetching rooms: ' + err.message);
   });
 });
 
 // POST /rooms/new
 router.post('/new', (req, res, next) => {
-  const data = req.body;
-  logger.add('info', data);
+  let data = req.body;
+  logger.add('debug', data);
   if (!data.roomName) {
     res.status(400).json({ error: 'Invalid parameters!'});
+    logger.add('warn', 'Invalid parameters!');
   } else {
     if (!data.password) {
       data.password = null;
+    } else {
+      data.password = bcrypt.hashSync(data.password, saltRounds);
     }
     Models.Room.findOrCreate({
       where: {
@@ -32,9 +40,11 @@ router.post('/new', (req, res, next) => {
         res.send(instance);
       } else {
         res.status(409).json({ error: 'This roomName has already been taken!'});
+        logger.add('warn', 'This roomName has already been taken!');
       }
     }).catch(err => {
-      logger.add('error', err);
+      res.status(400).json({ error: 'Creating a new room failed: ' + err.message });
+      logger.add('error', err.message);
     });
   }
 });
@@ -47,7 +57,11 @@ router.post('/join/:id', (req, res, next) => {
     res.status(400).json({ error: 'Invalid parameters!' });
   } else {
     Models.Room.findById(roomId).then(room => {
-      if (room.dataValues.password !== null && room.dataValues.password != data.password) {
+      let matches = true;
+      if (room.dataValues.password !== null) {
+        matches = bcrypt.compareSync(data.password, room.dataValues.password);
+      }
+      if (!matches) {
         res.sendStatus(403);
       } else {
         Models.User.findById(data.userId).then(user => {
@@ -77,8 +91,11 @@ router.post('/leave/:id', (req, res, next) => {
       }
     }).then(userInRoom => {
       if (userInRoom) {
-        userInRoom.deactivate();
-        res.status(200).json({ roomId: roomId});
+        userInRoom.deactivate().then(() => {
+          res.status(200).json({ roomId: roomId});
+        }).catch(err => {
+          res.status(409).json({ error: err.message });
+        });
       } else {
         res.status(400).json({ error: 'Relation not found!' });
       }
@@ -97,8 +114,7 @@ router.get('/in/:id', (req, res, next) => {
   } else {
     Models.User.findById(userId).then(user => {
       if (user) {
-        user.getJoined().then(rooms => {
-
+        return user.getJoined().then(rooms => {
           const validated = rooms.reduce((rooms, room) => {
             if (room.UserInRoom.active) {
               rooms.push(room);

@@ -17,9 +17,9 @@ module.exports = (io) => {
      * { roomId: <int>, userId: <int>, message: <string>, time: <int> }
      */
     socket.on('message', data => {
-      logger.add('info', 'roomId: ' + data.roomId +', userId: ' + data.userId + ', message: ' + data.message);
+      logger.add('debug', 'roomId: ' + data.roomId +', userId: ' + data.userId + ', message: ' + data.message);
       socket.to(data.roomId).emit('message', data);
-      logger.add('info', Object.keys(socket.rooms));
+      logger.add('debug', Object.keys(socket.rooms));
     });
 
     /**
@@ -27,7 +27,7 @@ module.exports = (io) => {
      */
     socket.on('join', data => {
       connections[socket.id] = Object.assign({}, data.user);
-      logger.add('info', 'Received join request from client: ' + data.user.userName);
+      logger.add('debug', 'Received join request from client: ' + data.user.userName);
       socket.join(data.roomId, () => {
         socket.to(data.roomId).emit('userJoin', {
           socketId: socket.id,
@@ -48,8 +48,8 @@ module.exports = (io) => {
      * { roomId: <int>, user: <User> }
      */
     socket.on('leave', data => {
-      logger.add('info', 'Received leave request from client: ');
-      logger.add('info', data);
+      logger.add('debug', 'Received leave request from client: ');
+      logger.add('debug', data);
       socket.to(data.roomId).emit('userLeave', data);
       socket.leave(data.roomId);
     });
@@ -58,9 +58,9 @@ module.exports = (io) => {
       const rooms = Object.keys(socket.rooms);
       const id = socket.id;
       logger.add('info', 'Socket connection closing: ' + data);
-      logger.add('info', rooms);
+      logger.add('debug', rooms);
       rooms.forEach(room => {
-        logger.add('info', room);
+        logger.add('debug', room);
         if (room !== id) {
           socket.to(room).emit('userLeave', { roomId: room, user: connections[socket.id] });
         }
