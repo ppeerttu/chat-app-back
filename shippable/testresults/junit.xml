@@ -1,6 +1,0 @@
-<testsuites name="jest tests">
-  <testsuite name="API test for index" tests="1" errors="0" failures="0" skipped="0" timestamp="2017-11-10T07:29:27" time="1.616">
-    <testcase classname="API test for index Should give unauthorized for GET /api" name="API test for index Should give unauthorized for GET /api" time="0.279">
-    </testcase>
-  </testsuite>
-</testsuites>
