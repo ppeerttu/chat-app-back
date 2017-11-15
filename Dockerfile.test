@@ -4,13 +4,14 @@ RUN mkdir /src
 
 COPY . /src/
 
+RUN apk --no-cache add --virtual builds-deps build-base python
+
 # Change the ownership of files to node user
 RUN chown -R node:node /src
 USER node
 
 # Install dependencies
-RUN apk --no-cache add --virtual builds-deps build-base python
-RUN npm install --quiet
+RUN cd /src && npm install --quiet
 RUN npm rebuild bcrypt --build-from-source
 RUN npm cache verify
 
