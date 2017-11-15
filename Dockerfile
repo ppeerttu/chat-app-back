@@ -1,4 +1,4 @@
-FROM node:8.5.0-alpine
+FROM node:9.1.0-alpine
 
 WORKDIR /var/app
 
