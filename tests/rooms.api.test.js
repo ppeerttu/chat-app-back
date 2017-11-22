@@ -26,6 +26,12 @@ let roomTwo = {
   roomName: '',
   password: ''
 };
+const roomBase = {
+  id: null,
+  userId: null,
+  roomName: null,
+  password: null
+};
 let token = '';
 
 /**
@@ -61,6 +67,7 @@ describe('POST /api/rooms/new', () => {
         let copiedObject = Object.assign({}, user);
         delete copiedObject.password;
         expect(res.body).toMatchObject(copiedObject);
+        expect(res.body).not.toHaveProperty('password');
         user = Object.assign({}, user, res.body);
         return done();
       });
@@ -170,6 +177,183 @@ describe('POST /api/rooms/new', () => {
       .end(err => {
         if (err) return done.fail(err);
         return done();
+      });
+  });
+});
+
+describe('POST /api/rooms/join/:id', () => {
+  test('Should return 401 for unauthorized request', (done) => {
+    request(app)
+      .post('/api/rooms/join/' + roomOne.id)
+      .expect(401)
+      .end(err => {
+        if (err) return done.fail(err);
+        return done();
+      });
+  });
+
+  test('Should return 400 for falsy room id', (done) => {
+    request(app)
+      .post('/api/rooms/join/null')
+      .set('Authorization', 'Bearer ' + token)
+      .send(Object.assign({}, {
+        userId: user.id,
+        password: null
+      }))
+      .expect(400)
+      .end(err => {
+        if (err) return done.fail(err);
+        return done();
+      });
+  });
+
+  test('Should return 400 for falsy userId', (done) => {
+    request(app)
+      .post('/api/rooms/join/' + roomOne.id)
+      .set('Authorization', 'Bearer ' + token)
+      .send(Object.assign({}, {
+        userId: 'ad2d',
+        password: null
+      }))
+      .expect(400)
+      .end(err => {
+        if (err) return done.fail(err);
+        return done();
+      });
+  });
+
+  test('Should return 400 for missing password property', (done) => {
+    request(app)
+      .post('/api/rooms/join/' + roomOne.id)
+      .set('Authorization', 'Bearer ' + token)
+      .send(Object.assign({}, {
+        userId: user.id
+      }))
+      .expect(400)
+      .end(err => {
+        if (err) return done.fail(err);
+        return done();
+      });
+  });
+
+  test('Should return 404 for room not found', (done) => {
+    request(app)
+      .post('/api/rooms/join/-20')
+      .set('Authorization', 'Bearer ' + token)
+      .send(Object.assign({}, {
+        userId: user.id,
+        password: null
+      }))
+      .expect(404)
+      .end(err => {
+        if (err) return done.fail(err);
+        return done();
+      });
+  });
+
+  test('Should return 403 for wrong password', (done) => {
+    request(app)
+      .post('/api/rooms/join/' + roomTwo.id)
+      .set('Authorization', 'Bearer ' + token)
+      .send(Object.assign({}, {
+        userId: user.id,
+        password: 'aaaaaaaa'
+      }))
+      .expect(403)
+      .end(err => {
+        if (err) return done.fail(err);
+        return done();
+      });
+  });
+
+  test('Should return 404 for user not found', (done) => {
+    request(app)
+      .post('/api/rooms/join/' + roomOne.id)
+      .set('Authorization', 'Bearer ' + token)
+      .send(Object.assign({}, {
+        userId: -20,
+        password: ''
+      }))
+      .expect(404)
+      .end(err => {
+        if (err) return done.fail(err);
+        return done();
+      });
+  });
+
+  test('Should return 200 for correct request', (done) => {
+    request(app)
+      .post('/api/rooms/join/' + roomOne.id)
+      .set('Authorization', 'Bearer ' + token)
+      .send(Object.assign({}, {
+        userId: user.id,
+        password: null
+      }))
+      .expect(200)
+      .end(err => {
+        if (err) return done.fail(err);
+        return done();
+      });
+  });
+
+  test('Should return 200 for correct request for private room', (done) => {
+    request(app)
+      .post('/api/rooms/join/' + roomTwo.id)
+      .set('Authorization', 'Bearer ' + token)
+      .send(Object.assign({}, {
+        userId: user.id,
+        password: roomTwo.password
+      }))
+      .expect(200)
+      .end(err => {
+        if (err) return done.fail(err);
+        return done();
+      });
+  });
+
+  test('Should return 400 for joining a room when already in that room', (done) => {
+    request(app)
+      .post('/api/rooms/join/' + roomTwo.id)
+      .set('Authorization', 'Bearer ' + token)
+      .send(Object.assign({}, {
+        userId: user.id,
+        password: roomTwo.password
+      }))
+      .expect(400)
+      .end(err => {
+        if (err) return done.fail(err);
+        return done();
+      });
+  });
+
+});
+
+describe('GET /api/rooms/all', () => {
+  test('Should return 401 for unauthorized request', (done) => {
+    request(app)
+      .get('/api/rooms/all')
+      .expect(401)
+      .end(err => {
+        if (err) return done.fail(err);
+        return done();
+      });
+  });
+
+  test('Should return 200 with correct data for authorized request', (done) => {
+    request(app)
+      .get('/api/rooms/all')
+      .set('Authorization', 'Bearer ' + token)
+      .expect(200)
+      .then(res => {
+        const rooms = res.body;
+        expect(rooms.constructor).toBe(Array);
+        expect(rooms.length).toBeGreaterThan(1);
+        rooms.map(room => {
+          expect(room).toHaveProperty('id');
+          expect(room).toHaveProperty('roomName');
+          expect(room).toHaveProperty('password');
+        });
+        done();
       });
   });
 });
