@@ -3,11 +3,11 @@ const app = require('../app');
 const Models = require('../models');
 const chars = 'abcdefghijklmnopqrstuvwxyzåäöABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ0123456789';
 
-/*
+
 afterAll(() => {
   Models.sequelize.close();
 });
-*/
+
 
 /**
  * Creating unique username for tests

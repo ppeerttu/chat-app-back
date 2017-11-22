@@ -12,9 +12,9 @@ module.exports = {
     seederStorageTableName: 'SequelizeData'
   },
   test: {
-    host: "db",
+    host: "db_test",
     port: 5432,
-    database: 'db_test',
+    database: process.env.POSTGRES_DB,
     dialect: 'postgres',
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,

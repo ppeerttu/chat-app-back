@@ -34,11 +34,11 @@ beforeAll(() => {
   setNewUserName(user);
   setNewUserName(comparedUser);
 });
-/*
+
 afterAll(() => {
   Models.sequelize.close();
 });
-*/
+
 describe('POST /api/users/register', () => {
 
 
