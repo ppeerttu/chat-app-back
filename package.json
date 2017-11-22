@@ -7,7 +7,7 @@
     "start": "nodemon bin/www.js",
     "prestart:prod": "./node_modules/sequelize-cli/lib/sequelize db:migrate --config config/config.js && ./node_modules/sequelize-cli/lib/sequelize db:seed:all --config config/config.js",
     "start:prod": "node bin/www.js",
-    "pretest": "/src/node_modules/sequelize-cli/lib/sequelize db:migrate --config config/config.js && /src/node_modules/sequelize-cli/lib/sequelize db:seed:all --config config/config.js",
+    "pretest": "./node_modules/sequelize-cli/lib/sequelize db:migrate --config config/config.js && ./node_modules/sequelize-cli/lib/sequelize db:seed:all --config config/config.js",
     "test": "jest",
     "posttest": "./node_modules/sequelize-cli/lib/sequelize db:migrate:undo:all --config config/config.js && ./node_modules/sequelize-cli/lib/sequelize db:seed:undo:all --config config/config.js",
     "test:ci": "jest --watchAll",
