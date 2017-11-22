@@ -62,19 +62,26 @@ router.post('/join/:id', (req, res, next) => {
     res.status(400).json({ error: 'Invalid parameters!' });
   } else {
     Models.Room.findById(roomId).then(room => {
-      let matches = true;
-      if (room.dataValues.password !== null) {
-        matches = bcrypt.compareSync(data.password, room.dataValues.password);
-      }
-      if (!matches) {
-        return new Promise((resolve, reject) => { reject({ status: 403, message: 'Wrong password' }); });
+      if (room) {
+        let matches = true;
+        if (room.dataValues.password !== null) {
+          matches = bcrypt.compareSync(data.password, room.dataValues.password);
+        }
+        if (!matches) {
+          return new Promise((resolve, reject) => { reject({ status: 403, message: 'Wrong password' }); });
+        } else {
+          return room;
+        }
       } else {
-        return room;
+        return new Promise((resolve, reject) => { reject({ status: 404, message: 'Room not found' }); });
       }
     })
     .then((room) => {
       return Models.User.findById(data.userId).then(user => {
-        return [room, user];
+        if (user) {
+          return [room, user];
+        }
+        return new Promise((resolve, reject) => { reject({ status: 404, message: 'User not found' }); });
       });
     })
     .then(results => {
@@ -83,16 +90,17 @@ router.post('/join/:id', (req, res, next) => {
       return user.addJoined(room, { through: { active: true }});
     })
     .then(results => {
-      if (results[0] > 0) {
+      if (results[0] && results[0].length > 0) {
         res.status(200).json({ roomId: roomId });
       } else {
-        return new Promise((resolve, reject) => { reject({ status: 400, message: 'Failed to set user in room due to unknown reason.' }); });
+        return new Promise((resolve, reject) => { reject({ status: 400, message: 'Failed to add user in room.' +
+         ' This happended most likely because user is already in this room.' }); });
       }
     }).catch(err => {
       if (err.status) {
         res.status(err.status).json({ error: err.message });
       } else {
-        res.status(400).json({ error: err.message });
+        res.status(500).json({ error: err.message });
       }
     });
   }
@@ -125,7 +133,7 @@ router.post('/leave/:id', (req, res, next) => {
       if (err.status) {
         res.status(err.status).json({ error: err.message });
       } else {
-        res.status(400).json({ error: err.message });
+        res.status(500).json({ error: err.message });
       }
     });
   }
@@ -157,7 +165,7 @@ router.get('/in/:id', (req, res, next) => {
       if (err.status) {
         res.status(err.status).json({ error: err.message });
       } else {
-        res.status(400).json({ error: err.message });
+        res.status(500).json({ error: err.message });
       }
     });
   }
