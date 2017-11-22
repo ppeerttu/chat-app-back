@@ -1,3 +1,4 @@
 node_modules
 shippable/*
 .env
+tests/test.sh

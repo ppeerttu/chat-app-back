@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "prestart": "sequelize db:migrate --config config/config.js && sequelize db:seed:all --config config/config.js",
-    "start": "nodemon ./bin/www.js",
-    "prestart:prod": "sequelize db:migrate --config config/config.js && sequelize db:seed:all --config config/config.js",
+    "prestart": "./node_modules/sequelize-cli/lib/sequelize db:migrate --config config/config.js && ./node_modules/sequelize-cli/lib/sequelize db:seed:all --config config/config.js",
+    "start": "nodemon bin/www.js",
+    "prestart:prod": "./node_modules/sequelize-cli/lib/sequelize db:migrate --config config/config.js && ./node_modules/sequelize-cli/lib/sequelize db:seed:all --config config/config.js",
     "start:prod": "node bin/www.js",
-    "test": "jest --silent",
-    "test:ci": "jest --silent",
-    "pretest:ci": "sequelize db:migrate --env $NODE_ENV --config config/config.js && sequelize db:seed:all --env $NODE_ENV --config config/config.js"
+    "pretest": "/src/node_modules/sequelize-cli/lib/sequelize db:migrate --config config/config.js && /src/node_modules/sequelize-cli/lib/sequelize db:seed:all --config config/config.js",
+    "test": "jest",
+    "posttest": "./node_modules/sequelize-cli/lib/sequelize db:migrate:undo:all --config config/config.js && ./node_modules/sequelize-cli/lib/sequelize db:seed:undo:all --config config/config.js",
+    "test:ci": "jest --watchAll",
+    "pretest:ci": "./node_modules/sequelize-cli/lib/sequelize db:migrate --config config/config.js && ./node_modules/sequelize-cli/lib/sequelize db:seed:all --config config/config.js"
   },
   "dependencies": {
     "bcrypt": "^1.0.3",

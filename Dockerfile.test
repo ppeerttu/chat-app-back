@@ -2,19 +2,23 @@ FROM node:9.1.0-alpine
 
 RUN mkdir /src
 
-COPY . /src/
-
 RUN apk --no-cache add --virtual builds-deps build-base python
 
 # Change the ownership of files to node user
 RUN chown -R node:node /src
 USER node
 
+WORKDIR /src
+
+COPY package.json package-lock.json ./
+
+
 # Install dependencies
-RUN cd /src && npm install --quiet
+RUN npm install --quiet
 RUN npm rebuild bcrypt --build-from-source
 RUN npm cache verify
 
 EXPOSE 3000
 
-WORKDIR /src
+
+CMD ["npm", "start""]

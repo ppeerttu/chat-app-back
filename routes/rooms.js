@@ -21,10 +21,14 @@ router.get('/all', (req, res, next) => {
 router.post('/new', (req, res, next) => {
   let data = req.body;
   logger.add('debug', data);
-  if (!data.roomName) {
-    res.status(400).json({ error: 'Invalid parameters!'});
-    logger.add('warn', 'Invalid parameters!');
+  if (!data.roomName || !data.userId) {
+    res.status(400).json({ error: 'Invalid parameters: missing roomName or userId.'});
+    logger.add('warn', 'Invalid parameters: missing roomName or userId');
+  } else if (isNaN(parseInt(data.userId))) {
+    res.status(400).json({ error: 'Invalid parameters: userId not a number.'});
+    logger.add('warn', 'Invalid parameters: userId not a number');
   } else {
+    data.userId = parseInt(data.userId);
     if (!data.password) {
       data.password = null;
     } else {
@@ -37,7 +41,8 @@ router.post('/new', (req, res, next) => {
       defaults: data
     }).spread((instance, created) => {
       if (created) {
-        res.send(instance);
+        delete instance.dataValues.password;
+        res.status(201).json(instance);
       } else {
         res.status(409).json({ error: 'This roomName has already been taken!'});
         logger.add('warn', 'This roomName has already been taken!');
@@ -53,7 +58,7 @@ router.post('/new', (req, res, next) => {
 router.post('/join/:id', (req, res, next) => {
   const data = Object.assign({}, req.body);
   const roomId = req.params.id;
-  if (!data.hasOwnProperty('password')|| !roomId || isNaN(parseInt(roomId)) || !data.userId) {
+  if (!data.hasOwnProperty('password')|| !roomId || isNaN(parseInt(roomId)) || isNaN(parseInt(data.userId))) {
     res.status(400).json({ error: 'Invalid parameters!' });
   } else {
     Models.Room.findById(roomId).then(room => {
@@ -62,17 +67,33 @@ router.post('/join/:id', (req, res, next) => {
         matches = bcrypt.compareSync(data.password, room.dataValues.password);
       }
       if (!matches) {
-        res.sendStatus(403);
+        return new Promise((resolve, reject) => { reject({ status: 403, message: 'Wrong password' }); });
       } else {
-        Models.User.findById(data.userId).then(user => {
-          user.addJoined(room, { through: { active: true }});
-          res.status(200).json({ roomId: roomId });
-        }).catch(err => {
-          res.status(400).json({ error: err.message });
-        });
+        return room;
+      }
+    })
+    .then((room) => {
+      return Models.User.findById(data.userId).then(user => {
+        return [room, user];
+      });
+    })
+    .then(results => {
+      const user = results[1];
+      const room = results[0];
+      return user.addJoined(room, { through: { active: true }});
+    })
+    .then(results => {
+      if (results[0] > 0) {
+        res.status(200).json({ roomId: roomId });
+      } else {
+        return new Promise((resolve, reject) => { reject({ status: 400, message: 'Failed to set user in room due to unknown reason.' }); });
       }
     }).catch(err => {
-      res.status(400).json({ error: err.message });
+      if (err.status) {
+        res.status(err.status).json({ error: err.message });
+      } else {
+        res.status(400).json({ error: err.message });
+      }
     });
   }
 });
@@ -89,24 +110,28 @@ router.post('/leave/:id', (req, res, next) => {
         userId: data.userId,
         roomId: roomId
       }
-    }).then(userInRoom => {
+    })
+    .then(userInRoom => {
       if (userInRoom) {
-        userInRoom.deactivate().then(() => {
-          res.status(200).json({ roomId: roomId});
-        }).catch(err => {
-          res.status(409).json({ error: err.message });
-        });
+        return userInRoom.deactivate();
       } else {
-        res.status(400).json({ error: 'Relation not found!' });
+        return new Promise((resolve, reject) => { reject({ status: 400, message:'Relation not found!'}); });
       }
-    }).catch(err => {
-      res.status(400).json({ error: err.message });
+    })
+    .then(() => {
+      res.status(200).json({ roomId: roomId});
+    })
+    .catch(err => {
+      if (err.status) {
+        res.status(err.status).json({ error: err.message });
+      } else {
+        res.status(400).json({ error: err.message });
+      }
     });
   }
 });
 
 // GET /rooms/in/:id
-
 router.get('/in/:id', (req, res, next) => {
   const userId = req.params.id;
   if (!userId || isNaN(parseInt(userId))) {
@@ -114,22 +139,26 @@ router.get('/in/:id', (req, res, next) => {
   } else {
     Models.User.findById(userId).then(user => {
       if (user) {
-        return user.getJoined().then(rooms => {
-          const validated = rooms.reduce((rooms, room) => {
-            if (room.UserInRoom.active) {
-              rooms.push(room);
-            }
-            return rooms;
-          }, []);
-          res.send(validated);
-        }).catch(err => {
-          res.status(400).json({ error: err.message });
-        });
+        return user.getJoined()
       } else {
-        res.status(400).json({ error: 'User not found with given id!' });
+        return new Promise((resolve, reject) => { reject({ status: 400, message: 'User not found with given id!' }); });
       }
-    }).catch(err => {
-      res.status(400).json({ error: err.message });
+    })
+    .then(rooms => {
+      const validated = rooms.reduce((rooms, room) => {
+        if (room.UserInRoom.active) {
+          rooms.push(room);
+        }
+        return rooms;
+      }, []);
+      res.send(validated);
+    })
+    .catch(err => {
+      if (err.status) {
+        res.status(err.status).json({ error: err.message });
+      } else {
+        res.status(400).json({ error: err.message });
+      }
     });
   }
 });

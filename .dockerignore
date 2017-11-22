@@ -1,4 +1,6 @@
-node_modules/
 .eslintrc
 .gitignore
-README.md
+*.md
+*.yml
+Docker*
+.dockerignore

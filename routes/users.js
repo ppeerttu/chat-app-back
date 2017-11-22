@@ -7,10 +7,6 @@ const Models = require('../models');
 const Logger = require('../lib/logger');
 const logger = new Logger();
 
-/* GET users listing. */
-router.get('/', (req, res, next) => {
-  res.send('respond with a resource');
-});
 
 // POST /users/login
 router.post('/login', (req, res, next) => {
@@ -25,29 +21,34 @@ router.post('/login', (req, res, next) => {
       }
     }).then(user => {
       if (!user) {
-        res.status(400).json({ error: 'User not found! '});
-        logger.add('warn', 'Error occurred while logging user in: user not found');
+        return new Promise((resolve, reject) => { reject({ status: 400, message: 'User not found!' }); });
       } else {
-        bcrypt.compare(data.password, user.password).then(matches => {
-          if (matches) {
-            user = Object.assign({}, user.dataValues);
-            const token = jwt.sign({ userName: user.userName }, 'testy secret 5', {
-              expiresIn: '1h'
-            });
-            let userWithToken = Object.assign({}, user, {token});
-            delete userWithToken.password;
-            res.status(200).json(userWithToken);
-          } else {
-            res.status(400).json({ error: 'Wrong username or password!' });
-            logger.add('warn', 'Error occurred while logging user in: wrong password');
-          }
-        }).catch(err => {
-          res.status(500).json({ error: 'Error occurred while operating with hash functions' });
-          logger.add('error', 'Error occurred while operating with bcrypt comparing functions: ' + err.message);
+        return bcrypt.compare(data.password, user.password).then(matches => {
+          return [matches, user];
         });
       }
-    }).catch(err => {
-      res.status(500).json({ error: err.message });
+    })
+    .then(values => {
+      const matches = values[0];
+      let user = values[1];
+      if (matches) {
+        user = Object.assign({}, user.dataValues);
+        const token = jwt.sign({ userName: user.userName }, 'testy secret 5', {
+          expiresIn: '1h'
+        });
+        let userWithToken = Object.assign({}, user, {token});
+        delete userWithToken.password;
+        res.status(200).json(userWithToken);
+      } else {
+        return new Promise((resolve, reject) => { reject({ status: 400, message: 'Wrong username or password!' }); });
+      }
+    })
+    .catch(err => {
+      if (err.status) {
+        res.status(err.status).json({ error: err.message });
+      } else {
+        res.status(500).json({ error: err.message });
+      }
       logger.add('error', 'Error occurred while logging user in: ' + err.message);
     });
   }
@@ -59,7 +60,8 @@ router.get('/token', (req, res, next) => {
   if (req.user) {
     Models.User.find({ where: {
       userName: req.user.userName
-    }}).then(user => {
+    }})
+    .then(user => {
       if (user) {
         user = Object.assign({}, user.dataValues);
         const token = jwt.sign({ userName: user.userName }, 'testy secret 5', {
@@ -69,9 +71,16 @@ router.get('/token', (req, res, next) => {
         delete userWithToken.password;
         res.status(200).json(userWithToken);
       } else {
-        res.status(400).json({ error: 'User not found!' });
-        logger.add('warn', 'User not found');
+        return new Promise((resolve, reject) => { reject({ status: 400, message: 'User not found!' }); });
       }
+    })
+    .catch(err => {
+      if (err.status) {
+        res.status(err.status).json({ error: err.message });
+      } else {
+        res.status(500).json({ error: err.message });
+      }
+      logger.add('error', 'Error occurred while fetching API token: ' + err.message);
     });
   } else {
     res.status(400).json({ error: 'Request missing property user' });
@@ -90,26 +99,30 @@ router.post('/register', (req, res, next) => {
       where: {
         userName: data.userName
       }
-    }).then(user => {
+    })
+    .then(user => {
       if (!user) {
-        bcrypt.hash(data.password, saltRounds).then(hash => {
-          data = Object.assign({}, data, {
-            password: hash
-          });
-          return Models.User.create(data);
-        }).then(user => {
-          delete user.dataValues.password;  // user is a promise object
-          res.send(user);
-        }).catch(err => {
-          res.status(400).json({ error: err.message });
-          logger.add('error', 'Error occurred while creating a new user: ' + err.message);
-        });
+        return bcrypt.hash(data.password, saltRounds);
       } else {
-        res.status(400).json({ error: 'Username already in use!' });
-        logger.add('warn', 'Username already in use!');
+        return new Promise((resolve, reject) => { reject({ status: 400, message: 'Username already taken!' }); });
       }
-    }).catch(err => {
-      res.status(400).json({ error: 'Error occurred: ' + err.message });
+    })
+    .then(hash => {
+      data = Object.assign({}, data, {
+        password: hash
+      });
+      return Models.User.create(data);
+    }).then(user => {
+      delete user.dataValues.password;  // user is a promise object
+      res.status(201).json(user);
+    })
+    .catch(err => {
+      if (err.status) {
+        res.status(err.status).json({ error: err.message });
+      } else {
+        res.status(500).json({ error: err.message });
+      }
+      logger.add('error', 'Error occurred while creating user: ' + err.message);
     });
   }
 });
@@ -120,42 +133,51 @@ router.put('/update', (req, res, next) => {
   if (data.password === null || data.password === '') {
     delete data.password;
   }
-  Models.User.find({
-    where: {
-      userName: data.userName
-    }
-  }).then(user => {
-    if (!user || user.id === data.id) {
-      const hash = bcrypt.hashSync(data.password, saltRounds);
+  if (!data.userName) {
+    res.status(400).json({ error: 'Request did not contain userName! '});
+  } else {
+    Models.User.find({
+      where: {
+        userName: data.userName
+      }
+    }).then(user => {
+      if (!user || user.id === data.id) {
+        return bcrypt.hash(data.password, saltRounds);
+      } else {
+        return new Promise((resolve, reject) => { reject({ status: 409, message: 'Username already in use!'}); });
+      }
+    })
+    .then(hash => {
       const dataWithHash = Object.assign({}, data, {
         password: hash
       });
-      Models.User.update(dataWithHash, {
+      return Models.User.update(dataWithHash, {
         where: {
           id: dataWithHash.id
         },
         returning: true
-      }).then(updated => {
-        if (updated[0] > 0) {
-          let updatedUser = updated[1][0];
-          delete updatedUser.dataValues.password;
-          res.status(200).json(updatedUser);
-        } else {
-          res.status(400).json({ error: 'Requested user for update was not found!' });
-          logger.add('warn', 'Requested user for update was not found!');
-        }
-      }).catch(err => {
-        res.send(400).json({ error: 'Error occurred while updating user: ' + err.message });
-        logger.add('error', 'Error occurred while updating user: ' + err.message);
       });
-    } else {
-      res.status(409).json({ error: 'Username already in use!'});
-      logger.add('warn', 'Username already in use!');
-    }
-  }).catch(err => {
-    res.status(400).json({ error: 'Error occurred while finding the user: ' + err.message});
-    logger.add('error', 'Error occurred while finding the user: ' + err.message);
-  });
+    })
+    .then(updated => {
+      if (updated[0] > 0) {
+        let updatedUser = updated[1][0];
+        delete updatedUser.dataValues.password;
+        res.status(200).json(updatedUser);
+      } else {
+        return new Promise((resolve, reject) => { reject({ status: 404, message: 'Requested user for update was not found!'}); });
+      }
+    }).catch(err => {
+      if (err.status) {
+        // Catch handled errors
+        res.status(err.status).json({ error: err.message });
+      } else {
+        // Catch unhandled errors (sequelize errors)
+        res.status(500).json({ error: err.message });
+      }
+      logger.add('error', 'Error occurred while updating user: ' + err.message);
+    });
+  }
+
 });
 
 // POST /users/logout

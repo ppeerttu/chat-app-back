@@ -9,8 +9,8 @@ branches:
   only:
     - master
 
-#services:
-#  - postgres
+services:
+  - postgres
 
 env:
   global:
@@ -28,10 +28,10 @@ build:
     # Specific version is used to avoid issues due to version differencies
     - npm install npm@5.3.0 -g
     - npm -v
+    - psql -c "create role ${POSTGRES_USER} with superuser password '${POSTGRES_PASSWORD}';" -U postgres
+    - psql -c "create database ${POSTGRES_DB} owner ${POSTGRES_USER};" -U postgres
     - npm install
     - npm run test
-#    - psql -c "create role shippable with superuser password 'shippable';" -U postgres
-#    - psql -c "create database chat_db owner shippable;" -U postgres
 #    - npm run test:ci
 
   on_success:
