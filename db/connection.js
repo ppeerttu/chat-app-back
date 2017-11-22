@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize'),
   ENV = process.env.NODE_ENV ? process.env.NODE_ENV : 'development',
-  conf = require('../config/config.js')[EVN],
+  conf = require('../config/config.js')[ENV],
   db = conf.database,
   host = conf.host,
   port = conf.port,
