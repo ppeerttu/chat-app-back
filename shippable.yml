@@ -32,7 +32,7 @@ build:
     - psql -c "create role ${POSTGRES_USER} with superuser login password '${POSTGRES_PASSWORD}';" -U postgres
     - psql -c "create database $POSTGRES_DB owner ${POSTGRES_USER};" -U postgres
     - npm install
-    - npm run test
+    - npm test
 #    - npm run test:ci
 
   on_success:

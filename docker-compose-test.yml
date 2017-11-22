@@ -1,6 +1,6 @@
 version: '2'
 services:
-  app:
+  app_test:
     build:
       context: .
       dockerfile: Dockerfile.test
@@ -10,14 +10,15 @@ services:
     volumes:
       - .:/src
     links:
-      - db
+      - db_test
     depends_on:
-      - db
+      - db_test
     environment:
       POSTGRES_DB: $POSTGRES_DB
       POSTGRES_USER: $POSTGRES_USER
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-  db:
+      NODE_ENV: test
+  db_test:
     image: postgres
     environment:
       POSTGRES_DB: $POSTGRES_DB
