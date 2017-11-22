@@ -7,6 +7,8 @@ services:
     command: npm start
     ports:
       - "3000:3000"
+    volumes:
+      - .:/var/app
     links:
       - db
     depends_on:
