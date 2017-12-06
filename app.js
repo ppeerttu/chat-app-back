@@ -8,6 +8,7 @@ const expressJWT = require('express-jwt');
 const winston = require('winston');
 const expressWinston = require('express-winston');
 const cors = require('cors');
+const helmet = require('helmet');
 const ENV = process.env.NODE_ENV;
 
 const index = require('./routes/index');
@@ -46,6 +47,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressJWT({ secret: 'testy secret 5' }).unless({ path: ['/api/users/login', '/api/users/register']}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(helmet());
 
 app.use('/api/', index);
 app.use('/api/users', users);

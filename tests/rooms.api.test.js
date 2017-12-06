@@ -3,11 +3,9 @@ const app = require('../app');
 const Models = require('../models');
 const chars = 'abcdefghijklmnopqrstuvwxyzåäöABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ0123456789';
 
-
 afterAll(() => {
   Models.sequelize.close();
 });
-
 
 /**
  * Creating unique username for tests
@@ -17,7 +15,7 @@ let user = {
   firstName: 'Test',
   lastName: 'User',
   password: 'ADdsakd312',
-  email: 'test@tt.t'
+  email: 'test@tt.tt'
 };
 let roomOne = {
   roomName: ''
@@ -45,6 +43,7 @@ function setRandomStringForProperty(obj, property) {
     throw new Error('Given object should have property ' + property + ' but it does not!');
     return;
   }
+  obj[property] = '';
   for (let i = 0; i < 10; i++) {
     obj[property] += chars.charAt(Math.floor(Math.random() * chars.length));
   }
@@ -147,6 +146,7 @@ describe('POST /api/rooms/new', () => {
       .then(res => {
         expect(res.body).toMatchObject(roomOne);
         expect(res.body).not.toHaveProperty('password');
+        expect(res.body).toHaveProperty('secret');
         roomOne = Object.assign({}, res.body);
         return done();
       });
@@ -272,7 +272,7 @@ describe('POST /api/rooms/join/:id', () => {
       .set('Authorization', 'Bearer ' + token)
       .send(Object.assign({}, {
         userId: -20,
-        password: ''
+        password: null
       }))
       .expect(404)
       .end(err => {
@@ -351,7 +351,7 @@ describe('GET /api/rooms/all', () => {
         rooms.map(room => {
           expect(room).toHaveProperty('id');
           expect(room).toHaveProperty('roomName');
-          expect(room).toHaveProperty('password');
+          expect(room).not.toHaveProperty('password');
         });
         done();
       });

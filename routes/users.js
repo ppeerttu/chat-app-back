@@ -4,16 +4,18 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const saltRounds = 12;
 const Models = require('../models');
-const Logger = require('../lib/logger');
-const logger = new Logger();
-
+const logger = require('../lib/logger');
+const Validator = require('../lib/validator');
 
 // POST /users/login
 router.post('/login', (req, res, next) => {
   const data = req.body;
-  if (!data.userName || !data.password) {
-    res.status(400).json({ error: 'userName or password missing from request! '});
-    logger.add('warn', 'Error occurred while logging user in: missing properties userName or password');
+  if (
+    !Validator.validateUserName(data.userName)
+    || !Validator.validateUserPassword(data.password)
+  ) {
+    logger.add('warn', 'Invalid parameters while trying to log user in!');
+    res.status(400).json({ error: 'Invalid parameters!' });
   } else {
     Models.User.findOne({
       where: {
@@ -91,7 +93,11 @@ router.get('/token', (req, res, next) => {
 // POST /users/register
 router.post('/register', (req, res, next) => {
   let data = req.body;
-  if (!data.userName || !data.email || !data.password) {
+  if (
+    !Validator.validateUserName(data.userName)
+    || !Validator.validateEmail(data.email)
+    || !Validator.validateUserPassword(data.password)
+  ) {
     res.status(400).json({ error: 'Invalid parameters!'});
     logger.add('warn', 'Invalid parameters!');
   } else {
@@ -130,11 +136,20 @@ router.post('/register', (req, res, next) => {
 // put /users/update
 router.put('/update', (req, res, next) => {
   const data = req.body;
-  if (data.password === null || data.password === '') {
+  if (
+    data.password === null
+    || data.password === ''
+    || data.password === 'null'
+  ) {
     delete data.password;
   }
-  if (!data.userName) {
-    res.status(400).json({ error: 'Request did not contain userName! '});
+  if (
+    !Validator.validateUserName(data.userName)
+    || !Validator.validateEmail(data.email)
+    || (data.password && !Validator.validateUserPassword(data.password))
+  ) {
+    logger.add('warn', 'Can\'t update user: invalid parameters!');
+    res.status(400).json({ error: 'Invalid parameters! '});
   } else {
     Models.User.find({
       where: {

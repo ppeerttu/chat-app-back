@@ -7,8 +7,7 @@ const Sequelize = require('sequelize'),
   username = conf.username,
   password = conf.password,
   dialect = conf.dialect,
-  Logger = require('../lib/logger'),
-  logger = new Logger();
+  logger = require('../lib/logger');
 
 const sequelize = new Sequelize(db, username, password, {
   host: host,
