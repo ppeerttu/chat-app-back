@@ -10,6 +10,7 @@ const http = require('http');
 const Logger = require('../lib/logger');
 const logger = new Logger();
 logger.init();
+
 /**
  * Get port from environment and store in Express.
  */

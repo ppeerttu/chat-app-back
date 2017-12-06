@@ -11,7 +11,7 @@ let user = {
   firstName: 'Test',
   lastName: 'User',
   password: 'ADdsakd312',
-  email: 'test@tt.t'
+  email: 'test@tt.tt'
 };
 
 let comparedUser = {
@@ -23,6 +23,7 @@ let comparedUser = {
 };
 
 function setNewUserName(user) {
+  user.userName = '';
   for (let i = 0; i < 10; i++) {
     user.userName += chars.charAt(Math.floor(Math.random() * chars.length));
   }
@@ -223,115 +224,116 @@ describe('GET /api/users/token', () => {
 
   });
 
-  describe('PUT /api/users/update', () => {
+});
 
-    test('Should return 401 for unauthorized request', (done) => {
-      request(app)
-        .put('/api/users/update')
-        .send(comparedUser)
-        .expect(401)
-        .end(err => {
-          if (err) return done.fail(err);
-          return done();
-        });
-    });
+describe('PUT /api/users/update', () => {
 
-    test('Should return 400 for missing userName property', (done) => {
-      request(app)
-        .put('/api/users/update')
-        .set('Authorization', 'Bearer ' + token)
-        .send(Object.assign({}, comparedUser, {
-          userName: null
-        }))
-        .expect(400)
-        .end(err => {
-          if (err) return done.fail(err);
-          return done();
-        });
-    });
-
-    test('Should return 400 for missing userName', (done) => {
-      request(app)
-        .put('/api/users/update')
-        .set('Authorization', 'Bearer ' + token)
-        .send(Object.assign({}, user, {
-          userName: null
-        }))
-        .expect(400)
-        .end(err => {
-          if (err) return done.fail(err);
-          return done();
-        });
-    });
-
-    test('Should return 409 for conflicting userName', (done) => {
-      request(app)
+  test('Should return 401 for unauthorized request', (done) => {
+    request(app)
       .put('/api/users/update')
-      .set('Authorization', 'Bearer ' + token)
-      .send(Object.assign({}, user, {
-        userName: comparedUser.userName
-      }))
-      .expect(409)
+      .send(comparedUser)
+      .expect(401)
       .end(err => {
         if (err) return done.fail(err);
         return done();
       });
-    });
-
-    test('Should return 404 for falsy id', (done) => {
-      let testUser = Object.assign({}, user, {
-        id: -300
-      });
-      setNewUserName(testUser);
-      request(app)
-        .put('/api/users/update')
-        .set('Authorization', 'Bearer ' + token)
-        .send(testUser)
-        .expect(404)
-        .end(err => {
-          if (err) return done.fail(err);
-          return done();
-        });
-    });
-
-    test('Should return 200 for correct credentials', (done) => {
-      setNewUserName(user);
-      request(app)
-        .put('/api/users/update')
-        .set('Authorization', 'Bearer ' + token)
-        .send(user)
-        .expect(200)
-        .then(res => {
-          let copiedUser = Object.assign({}, user);
-          delete copiedUser.password;
-          expect(res.body).toMatchObject(copiedUser);
-          return done();
-        });
-    });
-
   });
 
-  describe('POST /api/users/logout', () => {
+  test('Should return 400 for missing userName property', (done) => {
+    request(app)
+      .put('/api/users/update')
+      .set('Authorization', 'Bearer ' + token)
+      .send(Object.assign({}, comparedUser, {
+        userName: null
+      }))
+      .expect(400)
+      .end(err => {
+        if (err) return done.fail(err);
+        return done();
+      });
+  });
 
-    test('Should return 401 for unauthorized request', (done) => {
-      request(app)
-        .post('/api/users/logout')
-        .expect(401)
-        .end(err => {
-          if (err) return done.fail(err);
-          return done();
-        });
-    });
+  test('Should return 400 for missing userName', (done) => {
+    request(app)
+      .put('/api/users/update')
+      .set('Authorization', 'Bearer ' + token)
+      .send(Object.assign({}, user, {
+        userName: null
+      }))
+      .expect(400)
+      .end(err => {
+        if (err) return done.fail(err);
+        return done();
+      });
+  });
 
-    test('Should return 200 for authorized request', (done) => {
-      request(app)
-        .post('/api/users/logout')
-        .set('Authorization', 'Bearer ' + token)
-        .expect(200)
-        .end(err => {
-          if (err) return done.fail(err);
-          return done();
-        });
+  test('Should return 409 for conflicting userName', (done) => {
+    request(app)
+    .put('/api/users/update')
+    .set('Authorization', 'Bearer ' + token)
+    .send(Object.assign({}, user, {
+      userName: comparedUser.userName
+    }))
+    .expect(409)
+    .end(err => {
+      if (err) return done.fail(err);
+      return done();
     });
+  });
+
+  test('Should return 404 for falsy id', (done) => {
+    let testUser = Object.assign({}, user, {
+      id: -300
+    });
+    setNewUserName(testUser);
+    request(app)
+      .put('/api/users/update')
+      .set('Authorization', 'Bearer ' + token)
+      .send(testUser)
+      .expect(404)
+      .end(err => {
+        if (err) return done.fail(err);
+        return done();
+      });
+  });
+
+  test('Should return 200 for correct credentials', (done) => {
+    setNewUserName(user);
+    request(app)
+      .put('/api/users/update')
+      .set('Authorization', 'Bearer ' + token)
+      .send(user)
+      .expect(200)
+      .then(res => {
+        let copiedUser = Object.assign({}, user);
+        delete copiedUser.password;
+        expect(res.body).toMatchObject(copiedUser);
+        return done();
+      });
+  });
+
+});
+
+describe('POST /api/users/logout', () => {
+
+  test('Should return 401 for unauthorized request', (done) => {
+    request(app)
+      .post('/api/users/logout')
+      .expect(401)
+      .end(err => {
+        if (err) return done.fail(err);
+        return done();
+      });
+  });
+
+  test('Should return 200 for authorized request', (done) => {
+    request(app)
+      .post('/api/users/logout')
+      .set('Authorization', 'Bearer ' + token)
+      .expect(200)
+      .end(err => {
+        if (err) return done.fail(err);
+        return done();
+      });
   });
 });

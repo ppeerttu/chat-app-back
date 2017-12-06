@@ -15,6 +15,7 @@ User.belongsToMany(Room, {
   through: UserInRoom,
   foreignKey: 'userId'
 });
+
 // Rooms and Users have two relations; one-to-many and many-to-many through UserInRoom
 Room.belongsTo(User, { as: 'user' });
 Room.belongsToMany(User, {
