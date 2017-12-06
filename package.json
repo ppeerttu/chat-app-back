@@ -49,9 +49,6 @@
       "text",
       "cobertura"
     ],
-    "setupFiles": [
-      "<rootDir>/tests/setup/ignore-winston.js"
-    ],
     "collectCoverageFrom": [
       "routes/*.js",
       "app.js"
