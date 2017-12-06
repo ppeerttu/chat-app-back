@@ -1,5 +1,4 @@
-const Logger = require('../lib/logger'),
-  logger = new Logger();
+const logger = require('../lib/logger');
 
 let connections = {};
 let count = 0;

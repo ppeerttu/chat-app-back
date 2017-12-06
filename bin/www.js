@@ -7,8 +7,7 @@
 const app = require('../app');
 //const debug = require('debug')('chat-backend:server');
 const http = require('http');
-const Logger = require('../lib/logger');
-const logger = new Logger();
+const logger = require('../lib/logger');
 logger.init();
 
 /**

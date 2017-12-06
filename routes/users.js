@@ -4,8 +4,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const saltRounds = 12;
 const Models = require('../models');
-const Logger = require('../lib/logger');
-const logger = new Logger();
+const logger = require('../lib/logger');
 const Validator = require('../lib/validator');
 
 // POST /users/login
