@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../app');
 const Models = require('../models');
+const logger = require('../lib/logger');
 
 const chars = 'abcdefghijklmnopqrstuvwxyzåäöABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ0123456789';
 /**
@@ -34,6 +35,7 @@ let token = '';
 beforeAll(() => {
   setNewUserName(user);
   setNewUserName(comparedUser);
+  logger.init();
 });
 
 afterAll(() => {
