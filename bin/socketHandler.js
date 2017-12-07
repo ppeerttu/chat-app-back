@@ -1,4 +1,5 @@
 const logger = require('../lib/logger');
+const Validator = require('../lib/validator');
 
 let connections = {};
 let count = 0;
@@ -19,6 +20,15 @@ module.exports = (io) => {
      * { roomId: <int>, userId: <int>, message: <string>, time: <int> }
      */
     socket.on('message', data => {
+      if (
+        !Validator.validateId(data.roomId)
+        || !Validator.validateId(data.userId)
+        || !Validator.validateId(data.time)
+        || !Validator.validateMessage(data.message)
+      ) {
+        logger.add('warn', 'Received invalid data for \'message\' event from socket ' + socket.id);
+        return;
+      }
       logger.add('debug', 'roomId: ' + data.roomId +', userId: ' + data.userId + ', message: ' + data.message);
       logger.add('debug', Object.keys(socket.rooms));
       if (Object.keys(socket.rooms).includes(data.roomId.toString())) {
@@ -32,7 +42,10 @@ module.exports = (io) => {
      * { roomId: <int>, user: <User> }
      */
     socket.on('join', data => {
-      if (data.user) {
+      if (
+        Validator.validateUser(data.user)
+        || Validator.validateId(data.roomId)
+      ) {
         const found = connections[data.user.userName];
         let connectionsCount = 1;
         if (found) {
@@ -63,10 +76,17 @@ module.exports = (io) => {
     });
 
     socket.on('userInfo', data => {
-      socket.to(data.socketId).emit('userInfo', {
-        roomId: data.roomId,
-        user: data.user
-      });
+      if (
+        Validator.validateId(data.roomId)
+        && Validator.validateUser(data.user)
+      ) {
+        socket.to(data.socketId).emit('userInfo', {
+          roomId: data.roomId,
+          user: data.user
+        });
+      } else {
+        logger.add('warn', 'Socket ' + socket.id + ' trying to send userInfo with invalid data!');
+      }
     });
 
     /**
@@ -74,19 +94,20 @@ module.exports = (io) => {
      */
     socket.on('leave', data => {
       if (
-        !data.hasOwnProperty('roomId')
-        || !data.hasOwnProperty('user')
-      ) return;
+        !Validator.validateId(data.roomId)
+        || !Validator.validateUser(data.user)
+      ) {
+        logger.add('warn', 'Socket ' + socket.id + ' trying to send leave request with invalid data!');
+        return;
+      }
       logger.add('debug', 'Received leave request from client: ');
       logger.add('debug', data);
       socket.to(data.roomId).emit('userLeave', data);
-      if (data.user) {
-        let user = connections[data.user.userName];
-        if (user) {
-          user.sockets.map(conn => {
-            conn.leave(data.roomId);
-          });
-        }
+      let user = connections[data.user.userName];
+      if (user) {
+        user.sockets.map(conn => {
+          conn.leave(data.roomId);
+        });
       }
     });
 
@@ -98,7 +119,17 @@ module.exports = (io) => {
         rooms.forEach(room => {
           logger.add('debug', room);
           if (room !== id) {
-            socket.to(room).emit('userLeave', { roomId: room, user: socket.userName });
+            const user = connections[socket.userName];
+            if (user) {
+              socket.to(room).emit('userLeave', { roomId: room, user: {
+                userName: user.userName,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                id: user.id
+              }});
+            }
+
           }
         });
         connections[socket.userName].sockets.map(item => {
