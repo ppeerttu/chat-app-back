@@ -1,7 +1,6 @@
 const request = require('supertest');
 const app = require('../app');
 const Models = require('../models');
-const logger = require('../lib/logger');
 const chars = 'abcdefghijklmnopqrstuvwxyzåäöABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ0123456789';
 
 afterAll(() => {
@@ -55,7 +54,6 @@ beforeAll(() => {
   setRandomStringForProperty(roomOne, 'roomName');
   setRandomStringForProperty(roomTwo, 'roomName');
   setRandomStringForProperty(roomTwo, 'password');
-  logger.init();
 });
 
 describe('POST /api/rooms/new', () => {

@@ -1,5 +1,6 @@
-const logger = require('../lib/logger');
+const Logger = require('../lib/logger');
 const Validator = require('../lib/validator');
+const logger = Logger.getInstance();
 
 let connections = {};
 let count = 0;

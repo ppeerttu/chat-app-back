@@ -3,7 +3,8 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const saltRounds = 12;
 const Models = require('../models');
-const logger = require('../lib/logger');
+const Logger = require('../lib/logger');
+const logger = Logger.getInstance();
 const Validator = require('../lib/validator');
 
 // GET /rooms/all
@@ -138,11 +139,12 @@ router.post('/leave/:id', (req, res, next) => {
     })
     .then(userInRoom => {
       if (userInRoom) {
-        return userInRoom.deactivate();
+        return userInRoom;
       } else {
         return new Promise((resolve, reject) => { reject({ status: 400, message:'Relation not found!'}); });
       }
     })
+    .then(userInRoom => userInRoom.deactivate())
     .then(() => {
       res.status(200).json({ roomId: roomId});
     })

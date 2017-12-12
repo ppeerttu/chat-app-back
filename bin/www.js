@@ -7,8 +7,8 @@
 const app = require('../app');
 //const debug = require('debug')('chat-backend:server');
 const http = require('http');
-const logger = require('../lib/logger');
-logger.init();
+const Logger = require('../lib/logger');
+const logger = Logger.getInstance();
 
 /**
  * Get port from environment and store in Express.

@@ -7,14 +7,19 @@ const Sequelize = require('sequelize'),
   username = conf.username,
   password = conf.password,
   dialect = conf.dialect,
-  logger = require('../lib/logger');
+  Logger = require('../lib/logger');
 
-const sequelize = new Sequelize(db, username, password, {
+let opts = {
   host: host,
   dialect: dialect,
   port: port,
-  logging: logger.logQuery
-});
+  logging: false
+};
+
+// No logging in test environment
+if (ENV !== 'test') opts = Object.assign({}, opts, { logging: Logger.logQuery });
+
+const sequelize = new Sequelize(db, username, password, opts);
 
 module.exports = {
   DataTypes: Sequelize,

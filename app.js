@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 //const favicon = require('serve-favicon');
-const logger = require('morgan');
+//const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const expressJWT = require('express-jwt');
@@ -17,9 +17,7 @@ const rooms = require('./routes/rooms');
 
 const app = express();
 
-if (ENV === 'development') {
-  app.use(cors());
-}
+app.use(cors());
 
 if (ENV !== 'test') {
   app.use(expressWinston.logger({
