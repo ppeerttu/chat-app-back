@@ -7,7 +7,7 @@ module.exports = function(sequelize, DataTypes) {
 
   UserInRoom.prototype.deactivate = function() {
     this.active = false;
-    this.save();
+    return this.save();
   };
   return UserInRoom;
 };
