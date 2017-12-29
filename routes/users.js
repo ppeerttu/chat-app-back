@@ -158,15 +158,18 @@ router.put('/update', (req, res, next) => {
       }
     }).then(user => {
       if (!user || user.id === data.id) {
-        return bcrypt.hash(data.password, saltRounds);
+        if (data.password) {
+          return bcrypt.hash(data.password, saltRounds);
+        } else {
+          return false;
+        }
       } else {
         return new Promise((resolve, reject) => { reject({ status: 409, message: 'Username already in use!'}); });
       }
     })
     .then(hash => {
-      const dataWithHash = Object.assign({}, data, {
-        password: hash
-      });
+      let dataWithHash = Object.assign({}, data);
+      if (hash) dataWithHash = Object.assign({}, data, { password: hash });
       return Models.User.update(dataWithHash, {
         where: {
           id: dataWithHash.id
