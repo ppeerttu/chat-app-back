@@ -1,6 +1,6 @@
 # chat-backend
 
-Back end for [Slack](https://slack.com)-ish chat application.
+Back end for a hobby chat application.
 Author Perttu Kärnä
 
 ## Tech stack
@@ -29,11 +29,11 @@ To get this project running locally, you'll need Docker and docker-compose tools
 5. Press **Ctrl + C** to shut down the containers
     * If running on background, or if the containers abort, run `docker-compose down` in the project root
 
-For more docker commands read their documentation.
+For more docker commands read [their documentation](https://docs.docker.com/).
 
 ## Tests
 
-There is REST API tests for this project at [tests](tests) -folder. To run tests locally, use docker-compose-test.yml -file. Please note, that this will run tests continously.
+There is REST API tests for this project at [tests](tests) -folder. To run tests locally, use docker-compose-test.yml -file. Please note, that this will run tests continuously.
 
 ### Run tests without Docker environment
 

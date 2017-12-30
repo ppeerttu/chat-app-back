@@ -68,7 +68,7 @@ router.get('/token', (req, res, next) => {
       if (user) {
         user = Object.assign({}, user.dataValues);
         const token = jwt.sign({ userName: user.userName }, 'testy secret 5', {
-          expiresIn: '1h'
+          expiresIn: '2m'
         });
         let userWithToken = Object.assign({}, user, {token});
         delete userWithToken.password;
