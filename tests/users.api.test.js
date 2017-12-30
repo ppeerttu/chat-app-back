@@ -2,9 +2,8 @@ const request = require('supertest');
 const app = require('../app');
 const Models = require('../models');
 const chars = 'abcdefghijklmnopqrstuvwxyzåäöABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ0123456789';
-/**
- * Creating unique username for tests
- */
+
+let token = '';
 let user = {
   userName: '',
   firstName: 'Test',
@@ -12,7 +11,6 @@ let user = {
   password: 'ADdsakd312',
   email: 'test@tt.tt'
 };
-
 let comparedUser = {
   userName: '',
   firstName: 'Another',
@@ -21,14 +19,16 @@ let comparedUser = {
   email: 'an@ot.th'
 };
 
+/**
+ * Set random username for given user
+ * @param {User} user
+ */
 function setNewUserName(user) {
   user.userName = '';
   for (let i = 0; i < 10; i++) {
     user.userName += chars.charAt(Math.floor(Math.random() * chars.length));
   }
 }
-
-let token = '';
 
 beforeAll(() => {
   setNewUserName(user);

@@ -6,7 +6,7 @@ const Message = require('./message')(Database.sequelize, Database.DataTypes);
 const UserInRoom = require('./userinroom')(Database.sequelize, Database.DataTypes);
 
 /**
- * Since Sequelize V4 has removed classMethdos, associations are defined here
+ * Since Sequelize V4 has removed classMethdos, associations are defined here.
  * Instance methods are defined at model's definition and it is in prototype form:
  * Model.protptype.method = function(param) {...}
  */
