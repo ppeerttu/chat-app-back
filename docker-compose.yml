@@ -9,6 +9,7 @@ services:
       - "3000:3000"
     volumes:
       - .:/var/app
+      - /var/app/node_modules
     links:
       - db
     depends_on:
@@ -19,7 +20,7 @@ services:
       POSTGRES_USER: chat-user
       POSTGRES_PASSWORD: PSQLpass123
   db:
-    image: postgres
+    image: postgres:9-alpine
     volumes:
       - chatdb:/var/lib/postgresql/data
     environment:

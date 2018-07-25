@@ -1,7 +1,6 @@
-FROM node:9.1.0-alpine
+FROM node:9-alpine
 
 WORKDIR /var/app
-
 
 RUN apk --no-cache add --virtual builds-deps build-base python
 

@@ -17,7 +17,7 @@ services:
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
       NODE_ENV: production
   db:
-    image: postgres
+    image: postgres:9-alpine
     volumes:
       - chatdb:/var/lib/postgresql/data
     environment:

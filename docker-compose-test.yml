@@ -9,6 +9,7 @@ services:
       - "3000:3000"
     volumes:
       - .:/src
+      - /src/node_modules
     links:
       - db_test
     depends_on:
@@ -19,7 +20,7 @@ services:
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
       NODE_ENV: test
   db_test:
-    image: postgres
+    image: postgres:9-alpine
     environment:
       POSTGRES_DB: $POSTGRES_DB
       POSTGRES_USER: $POSTGRES_USER
